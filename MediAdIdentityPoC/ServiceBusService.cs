@@ -45,6 +45,11 @@ public class ServiceBusService : IAsyncDisposable
         await _processor.StartProcessingAsync(cancellationToken);
     }
 
+    public async Task StopProcessingAsync(CancellationToken cancellationToken = default)
+    {
+        await _processor.StopProcessingAsync(cancellationToken);
+    }
+
     public async ValueTask DisposeAsync()
     {
         await _processor.StopProcessingAsync();
