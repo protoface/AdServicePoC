@@ -1,12 +1,17 @@
 ﻿using System.DirectoryServices.AccountManagement;
+using System.Text.Json.Serialization;
 
 namespace MediAdIdentityPoC;
 
 public class AdIdentityAction
 {
-    public ActionType Action { get; set; } = ActionType.Disable;
-    public IdentityType IdentityType { get; set; } = IdentityType.Sid;
-    public string Identity { get; set; } = string.Empty;
+    [JsonConverter(typeof(JsonStringEnumConverter))]
+    public ActionType Action { get; init; } = ActionType.Disable;
+
+    [JsonConverter(typeof(JsonStringEnumConverter))]
+    public IdentityType IdentityType { get; init; } = IdentityType.Sid;
+
+    public string Identity { get; init; } = string.Empty;
 }
 
 public enum ActionType
