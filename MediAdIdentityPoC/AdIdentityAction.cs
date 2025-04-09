@@ -17,5 +17,5 @@ public class AdIdentityAction
 public enum ActionType
 {
     Enable,
-    Disable,
+    Disable
 }
