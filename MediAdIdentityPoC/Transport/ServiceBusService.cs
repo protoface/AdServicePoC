@@ -3,7 +3,10 @@ using Azure.Messaging.ServiceBus;
 
 namespace MediAdIdentityPoC.Transport;
 
-internal class ServiceBusService : IAsyncDisposable, ITransport
+/// <summary>
+/// Adapter for the Azure Service Bus
+/// </summary>
+internal sealed class ServiceBusService : IAsyncDisposable, ITransport
 {
     private readonly ServiceBusClient _client;
     private readonly ServiceBusProcessor _processor;
@@ -45,10 +48,12 @@ internal class ServiceBusService : IAsyncDisposable, ITransport
         await _processor.StopProcessingAsync();
         await _client.DisposeAsync();
         await _processor.DisposeAsync();
-        GC.SuppressFinalize(this);
     }
 
-    private class Message(ProcessMessageEventArgs messageEvent) : IMessage
+    /// <summary>
+    /// "Azure Service Bus"-specific implementation of the message abstraction
+    /// </summary>
+    private sealed class Message(ProcessMessageEventArgs messageEvent) : IMessage
     {
         public string Body { get; } = messageEvent.Message.Body.ToString();
         public string CorrelationId { get; } = messageEvent.Message.CorrelationId;
@@ -58,6 +63,9 @@ internal class ServiceBusService : IAsyncDisposable, ITransport
             messageEvent.DeadLetterMessageAsync(messageEvent.Message, deadLetterReason: reason, cancellationToken: cancellationToken);
     }
     
+    /// <summary>
+    /// Configuration Datamodel for the adapter. Includes all parameters which are configurable via configuration files or other means.
+    /// </summary>
     public sealed class ServiceBusConfiguration
     {
         public string ConnectionString { get; init; } = string.Empty;

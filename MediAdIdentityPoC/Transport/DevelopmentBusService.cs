@@ -1,5 +1,8 @@
 ﻿namespace MediAdIdentityPoC.Transport;
 
+/// <summary>
+/// Message bus adapter to be used in development and testing
+/// </summary>
 public class DevelopmentBusService : ITransport
 {
     public ITransport SetMessageHandler(Func<IMessage, Task> handler)
