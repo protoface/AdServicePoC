@@ -2,3 +2,7 @@
 /MediAdIdentityPoC/bin/*
 /MediAdIdentityPoC/obj/*
 /.idea/*
+
+/PoCMessageClient.sln.DotSettings.user
+/PoCMessageClient/bin/*
+/PoCMessageClient/obj/*
