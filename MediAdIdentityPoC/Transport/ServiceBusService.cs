@@ -15,10 +15,15 @@ internal sealed class ServiceBusService : IAsyncDisposable, ITransport
     {
         var config = configStore.GetRequiredSection("ServiceBus").Get<ServiceBusConfiguration>() ??
                      throw new("No service bus configuration found");
-        _client = new(config.ConnectionString, new DefaultAzureCredential(), new()
-        {
-            TransportType = ServiceBusTransportType.AmqpTcp // TODO: Cycle back on used protocol
-        });
+        if (config.ConnectionString == null && config.FullyQualifiedNamespace == null)
+            throw new("ConnectionString or FullyQualifiedNamespace has to be configured");
+
+        _client = config.ConnectionString != null
+            ? new(config.ConnectionString)
+            : new(config.FullyQualifiedNamespace, new DefaultAzureCredential(), new()
+            {
+                TransportType = ServiceBusTransportType.AmqpTcp, // TODO: Cycle back on used protocol
+            });
 
         _processor = _client.CreateProcessor(config.QueueName);
         _processor.ProcessErrorAsync += args =>
@@ -62,14 +67,14 @@ internal sealed class ServiceBusService : IAsyncDisposable, ITransport
         public Task DeadLetterAsync(string reason, CancellationToken cancellationToken = default) =>
             messageEvent.DeadLetterMessageAsync(messageEvent.Message, deadLetterReason: reason, cancellationToken: cancellationToken);
     }
-    
+
     /// <summary>
     /// Configuration Datamodel for the adapter. Includes all parameters which are configurable via configuration files or other means.
     /// </summary>
     public sealed class ServiceBusConfiguration
     {
-        public string ConnectionString { get; init; } = string.Empty;
+        public string? ConnectionString { get; init; }
+        public string? FullyQualifiedNamespace { get; init; }
         public string QueueName { get; init; } = string.Empty;
     }
-    
 }
