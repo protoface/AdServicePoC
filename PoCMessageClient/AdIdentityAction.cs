@@ -1,15 +1,15 @@
 ﻿using System.DirectoryServices.AccountManagement;
 using System.Text.Json.Serialization;
 
-namespace ConsoleApp1;
+namespace PocMessageClient;
 
 public class AdIdentityAction
 {
     [JsonConverter(typeof(JsonStringEnumConverter))]
-    public ActionType Action { get; set; } = ActionType.Disable;
+    public ActionType Action { get; init; } = ActionType.Disable;
 
     [JsonConverter(typeof(JsonStringEnumConverter))]
-    public IdentityType IdentityType { get; set; } = IdentityType.Sid;
+    public IdentityType IdentityType { get; init; } = IdentityType.Sid;
 
     public string Identity { get; set; } = string.Empty;
 }
