@@ -69,12 +69,12 @@ internal sealed class Worker(ILogger<Worker> logger, ITransport busService) : Ba
                 case IdentityType.SamAccountName:
                     user = UserPrincipal.FindByIdentity(ctx, IdentityType.SamAccountName, action.Identity);
                     break;
-                case IdentityType.Name:
-                case IdentityType.UserPrincipalName:
-                case IdentityType.DistinguishedName:
                 case IdentityType.Guid:
                     user = UserPrincipal.FindByIdentity(ctx, IdentityType.Guid, action.Identity);
                     break;
+                case IdentityType.Name:
+                case IdentityType.UserPrincipalName:
+                case IdentityType.DistinguishedName:
                 default:
                     logger.LogWarning("Identity type '{type}' not supported, disregarding...", action.IdentityType);
                     return msg.DeadLetterAsync("Identity type not supported", cancellationToken: stoppingToken);
