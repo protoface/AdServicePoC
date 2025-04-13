@@ -7,6 +7,8 @@ namespace MediAdIdentityPoC;
 
 internal sealed class Worker(ILogger<Worker> logger, ITransport busService) : BackgroundService
 {
+    private static readonly JsonSerializerOptions JsonSerializerOptions = new(JsonSerializerOptions.Default) { PropertyNameCaseInsensitive = true };
+
     /// <inheritdoc/>
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
@@ -38,7 +40,7 @@ internal sealed class Worker(ILogger<Worker> logger, ITransport busService) : Ba
         AdIdentityAction? action;
         try
         {
-            action = JsonSerializer.Deserialize<AdIdentityAction>(msg.Body);
+            action = JsonSerializer.Deserialize<AdIdentityAction>(msg.Body, JsonSerializerOptions);
         }
         catch (Exception ex)
         {
