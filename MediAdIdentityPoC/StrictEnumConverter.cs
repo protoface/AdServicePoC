@@ -7,7 +7,12 @@ public class StrictEnumConverter<TEnum> : JsonConverter<TEnum> where TEnum : str
 {
     public override TEnum Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
     {
-        var value = reader.GetString();
+        var value = reader.TokenType switch
+        {
+            JsonTokenType.String => reader.GetString(),
+            JsonTokenType.Number => reader.GetInt32().ToString(),
+            _ => throw new JsonException($"Invalid token type, expected {JsonTokenType.String} or {JsonTokenType.Number}, was {reader.TokenType}")
+        };
         return Enum.TryParse(value, true, out TEnum result) && Enum.IsDefined(result)
             ? result
             : throw new JsonException($"Failed to parse payload \"{value}\" to enum of type \"{typeof(TEnum).Name}\"");
