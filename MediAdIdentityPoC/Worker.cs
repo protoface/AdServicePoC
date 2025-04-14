@@ -1,13 +1,18 @@
 using System.ComponentModel;
 using System.DirectoryServices.AccountManagement;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using MediAdIdentityPoC.Transport;
 
 namespace MediAdIdentityPoC;
 
 internal sealed class Worker(ILogger<Worker> logger, ITransport busService) : BackgroundService
 {
-    private static readonly JsonSerializerOptions JsonSerializerOptions = new(JsonSerializerOptions.Default) { PropertyNameCaseInsensitive = true };
+    private static readonly JsonSerializerOptions JsonSerializerOptions = new(JsonSerializerOptions.Default)
+    {
+        PropertyNameCaseInsensitive = true,
+        UnmappedMemberHandling = JsonUnmappedMemberHandling.Disallow
+    };
 
     /// <inheritdoc/>
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
